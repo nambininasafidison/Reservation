@@ -1,5 +1,5 @@
 <?php
-require_once '/php/utils/Database_connection.php';
+require_once '../utils/Database_connection.php';
 
 class ReservationDao {
     public function saveReservation($reservation) {
@@ -7,12 +7,17 @@ class ReservationDao {
         try {
             $conn = DatabaseConnection::getConnection();
             $stmt = $conn->prepare("INSERT INTO reservations (clientName, reservationDate, reservationTime) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $reservation->getClientName(), $reservation->getReservationDate(), $reservation->getReservationTime());
+            $stmt->bindParam(1, $reservation->getClientName(), PDO::PARAM_STR);
+            $stmt->bindParam(2, $reservation->getReservationDate(), PDO::PARAM_STR);
+            $stmt->bindParam(3, $reservation->getReservationTime(), PDO::PARAM_STR);
             $status = $stmt->execute();
 
             if ($status) {
-                $reservation->setId($conn->insert_id);
+                $reservation->setId($conn->lastInsertId());
+                $status = $stmt->rowCount();
             }
+            $stmt = null;
+            $conn = null;
         } catch (Exception $e) {
             error_log($e->getMessage());
         }
@@ -24,8 +29,16 @@ class ReservationDao {
         try {
             $conn = DatabaseConnection::getConnection();
             $stmt = $conn->prepare("UPDATE reservations SET reservationDate=?, reservationTime=? WHERE id=? AND clientName=?");
-            $stmt->bind_param("ssis", $reservation->getReservationDate(), $reservation->getReservationTime(), $reservation->getId(), $reservation->getClientName());
+            $stmt->bindParam(1, $reservation->getReservationDate(), PDO::PARAM_STR);
+            $stmt->bindParam(2, $reservation->getReservationTime(), PDO::PARAM_STR);
+            $stmt->bindParam(3, $reservation->getId(), PDO::PARAM_INT);
+            $stmt->bindParam(4, $reservation->getClientName(), PDO::PARAM_STR);
             $status = $stmt->execute();
+            if ($status) {
+                $status = $stmt->rowCount();
+            }
+            $stmt = null;
+            $conn = null;
         } catch (Exception $e) {
             error_log($e->getMessage());
         }
@@ -37,8 +50,14 @@ class ReservationDao {
         try {
             $conn = DatabaseConnection::getConnection();
             $stmt = $conn->prepare("DELETE FROM reservations WHERE id=? AND clientName=?");
-            $stmt->bind_param("is", $id, $name);
+            $stmt->bindParam(1, $id, PDO::PARAM_INT);
+            $stmt->bindParam(2, $name, PDO::PARAM_STR);
             $status = $stmt->execute();
+            if ($status) {
+                $status = $stmt->rowCount();
+            }
+            $stmt = null;
+            $conn = null;
         } catch (Exception $e) {
             error_log($e->getMessage());
         }

@@ -1,11 +1,11 @@
 <?php
-require_once '/php/Dao/utilisateur_dao.php';
-require_once '/php/models/Utilisateur.php';
-
 session_start();
-$utilisateurDao = new UtilisateurDao();
+require_once '../Dao/utilisateur_dao.php';
+require_once '../models/Utilisateur.php';
+
 
 function processRequest() {
+    $utilisateurDao = new UtilisateurDao();
     $action = $_GET['action'] ?? $_POST['action'];
     if ($action == 'register') {
         $nom = $_POST['nom'];

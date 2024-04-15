@@ -1,12 +1,11 @@
 <?php
-require_once '/php/Dao/reservation_dao.php';
-require_once '/php/models/Reservation.php';
-
+require_once '../models/Utilisateur.php';
 session_start();
-
-$reservationDao = new ReservationDao();
+require_once '../Dao/reservation_dao.php';
+require_once '../models/Reservation.php';
 
 function processRequest() {
+    $reservationDao = new ReservationDao();
     $clientName = $_POST['clientName'] ?? $_GET['clientName'];
     $reservationDate = $_POST['reservationDate'] ?? $_GET['reservationDate'];
     $reservationTime = $_POST['reservationTime'] ?? $_GET['reservationTime'];
@@ -44,8 +43,8 @@ function processRequest() {
             $reservation->setReservationTime($reservationTime);
 
             $res = $reservationDao->updateReservation($reservation);
-            if ($res > 0) {
-                $_SESSION['id'] = $id;
+            if ($res) {
+                $_SESSION['id'] = $res;
                 $_SESSION['nom'] = $clientName;
                 $_SESSION['date'] = $sqlDate;
                 $_SESSION['heure'] = $reservationTime;
@@ -62,11 +61,11 @@ function processRequest() {
             $id = intval($_POST['id'] ?? $_GET['id']);
         
             $res = $reservationDao->deleteReservation($id, $clientName);
-            if ($res > 0) {
+            if ($res) {
                 $_SESSION['id'] = $id;
                 $_SESSION['nom'] = $clientName;
 
-                header('Location: /views/annulee.php');
+                header('Location: /views/reservation-annulee.php');
                 exit;
             } else {
                 $_SESSION['error'] = "L'identifiant et le nom de la reservation que vous essayez d'annuler ne sont pas compatible ou la reservation n'existe pas";

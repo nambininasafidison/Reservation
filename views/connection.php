@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../styles/footer.css"></link>
 </head>
 <body>
-	<a href="/index.php">Accueil</a>
+	<a href="/index.html">Accueil</a>
     <form action="/php/controllers/utilisateur.php?action=login" method="post">
     	<div class="input">
     		<label>Email:</label>

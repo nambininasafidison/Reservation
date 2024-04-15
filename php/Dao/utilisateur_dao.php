@@ -1,5 +1,5 @@
 <?php
-require_once '/php/utils/Database_connection.php';
+require_once '../utils/Database_connection.php';
 
 class UtilisateurDao {
     public function enregistrerUtilisateur($utilisateur) {
@@ -7,11 +7,13 @@ class UtilisateurDao {
         try {
             $conn = DatabaseConnection::getConnection();
             $stmt = $conn->prepare("INSERT INTO users (nom, email, motDePasse) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $utilisateur->getNom(), $utilisateur->getEmail(), $utilisateur->getMotDePasse());
+            $stmt->bindParam(1, $utilisateur->getNom(), PDO::PARAM_STR);
+            $stmt->bindParam(2, $utilisateur->getEmail(), PDO::PARAM_STR);
+            $stmt->bindParam(3, $utilisateur->getMotDePasse(), PDO::PARAM_STR);
             $status = $stmt->execute();
-            $stmt->close();
-            $conn->close();
-        } catch (Exception $e) {
+            $stmt = null;
+            $conn = null;
+        } catch (PDOException $e) {
             error_log($e->getMessage());
         }
         return $status;
@@ -22,23 +24,23 @@ class UtilisateurDao {
         try {
             $conn = DatabaseConnection::getConnection();
             $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND motDePasse = ?");
-            $stmt->bind_param("ss", $email, $motDePasse);
+            $stmt->bindParam(1, $email, PDO::PARAM_STR);
+            $stmt->bindParam(2, $motDePasse, PDO::PARAM_STR);
             $stmt->execute();
-            $result = $stmt->get_result();
-            if ($result->num_rows > 0) {
-                $row = $result->fetch_assoc();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+            if (!empty($result)) {
+                $row = $result[0]; 
                 $utilisateur = new Utilisateur();
                 $utilisateur->setId($row['id']);
                 $utilisateur->setNom($row['nom']);
                 $utilisateur->setEmail($row['email']);
                 $utilisateur->setMotDePasse($row['motDePasse']);
             }
-            $stmt->close();
-            $conn->close();
         } catch (Exception $e) {
             error_log($e->getMessage());
         }
         return $utilisateur;
     }
+    
 }
 ?>
