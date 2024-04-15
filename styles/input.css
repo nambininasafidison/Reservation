@@ -1,0 +1,25 @@
+@charset "UTF-8";
+
+.input {
+	position: relative;
+	margin-bottom: 5vh;
+	width: 100%;
+}
+
+label {
+	position: absolute;
+	left: 1vw;
+	top: -2vh;
+	font-size: 1.2vw;
+	background: #fff;
+	padding: 0 .3vw;
+}
+
+.input input {
+	height: 6vh;
+	border: 1px solid #333;
+	border-radius: 5px;
+	width: 100%;
+	font-size: 1vw;
+	padding: 0 1vw
+}
