@@ -44,7 +44,7 @@ function processRequest() {
 
             $res = $reservationDao->updateReservation($reservation);
             if ($res) {
-                $_SESSION['id'] = $res;
+                $_SESSION['id'] = $id;
                 $_SESSION['nom'] = $clientName;
                 $_SESSION['date'] = $sqlDate;
                 $_SESSION['heure'] = $reservationTime;
